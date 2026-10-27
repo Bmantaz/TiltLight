@@ -1,0 +1,94 @@
+/* Level-up screen. Cards sit where the Oplà's touch pads are, around a copy of its round screen.
+   Positions (data-pos) come from padPosition() in js/config/controls.js.
+
+   upright                          upside down (.upside-down on <html>)
+              (02)                    [ol]                    [or]
+        [il]        [ir]                        ( screen )
+   [ol]    ( screen )    [or]               [il]          [ir]
+                                                   (02)
+*/
+#levelup .wrap{width:100%;max-width:1040px;text-align:center}
+#levelup h2{font-size:64px;color:var(--frost);line-height:1}
+#levelup .sub{color:var(--muted);margin:6px 0 22px}
+.board-only{display:none}
+.has-board .board-only{display:inline}
+.has-board .keys-only{display:none}
+
+.opla{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:18px;row-gap:14px;align-items:start;
+  grid-template-areas:
+    ".  nova   nova   . "
+    "ol il     ir     or"
+    "ol screen screen or";
+}
+.upside-down .opla{
+  grid-template-areas:
+    "ol screen screen or"
+    "ol il     ir     or"
+    ".  nova   nova   . ";
+}
+/* faint outline of the board's pad ring */
+.opla::before{content:"";position:absolute;left:11%;right:11%;top:9%;bottom:-6%;border:1.5px dashed var(--moss);border-bottom-color:transparent;border-radius:50%;pointer-events:none}
+.upside-down .opla::before{top:-6%;bottom:9%;border-bottom-color:var(--moss);border-top-color:transparent}
+
+/* The Oplà's round display: mirrors what the board shows during a level-up */
+.opla-screen{grid-area:screen;justify-self:center;width:176px;height:176px;border-radius:50%;background:#000;border:6px solid #1c2a2f;box-shadow:0 0 0 1px var(--moss),0 0 50px rgba(143,227,224,.12);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-variant-numeric:tabular-nums}
+.opla-screen small{font-weight:800;font-size:13px;letter-spacing:.12em;color:var(--amber)}
+.opla-screen strong{font-size:56px;line-height:1;font-weight:800}
+.opla-screen .hp{width:96px;height:8px;border:1px solid var(--moss);border-radius:2px;overflow:hidden;margin-top:6px}
+.opla-screen .hp i{display:block;height:100%;background:var(--rose)}
+.opla-screen span{font-size:12px;color:var(--muted);margin-top:2px}
+
+/* Pad 02 is the Nova, not a choice */
+.opla-nova{grid-area:nova;justify-self:center;display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px}
+.opla-nova b{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;border:1.5px dashed var(--moss);font-size:11px}
+
+.card{position:relative;overflow:hidden;text-align:left;background:var(--panel);border:1.5px solid var(--moss);border-radius:14px;padding:18px 16px 18px;display:flex;flex-direction:column;gap:6px;
+  transition:transform .15s,border-color .15s,opacity .2s,box-shadow .2s;animation:card-in .35s cubic-bezier(.2,.9,.3,1.3) backwards}
+.card[data-pos="ol"]{grid-area:ol;align-self:center}
+.card[data-pos="il"]{grid-area:il;animation-delay:.06s}
+.card[data-pos="ir"]{grid-area:ir;animation-delay:.12s}
+.card[data-pos="or"]{grid-area:or;align-self:center;animation-delay:.18s}
+.card:hover,.card:focus-visible{border-color:var(--c);transform:translateY(-3px)}
+
+/* The pad with its LED, lit in the card's colour like the board */
+.card .pad{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.card .slot{position:relative;flex:none;width:40px;height:40px;border-radius:50%;background:var(--c);color:var(--night);display:grid;place-items:center;font-weight:800;font-size:13px;box-shadow:0 0 18px var(--c)}
+.card .slot::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid var(--c);opacity:0;animation:led 1.6s ease-out infinite}
+.card .key{margin-left:auto;font-size:12px;color:var(--muted);white-space:nowrap}
+.has-board .card .key{display:none}
+.card .big{font-size:28px;color:var(--c);line-height:1}
+.card b{font-size:17px}
+.card small{color:var(--c);font-weight:600;font-size:12px}
+.card p{font-size:14px;color:var(--muted);line-height:1.4}
+
+/* Level pips: owned, the one you're about to get, still to come */
+.lvls{display:flex;gap:4px;margin-top:2px}
+.lvls i{width:14px;height:5px;border-radius:3px;background:var(--moss)}
+.lvls i.on{background:var(--c)}
+.lvls i.next{background:var(--c);animation:blink 1s ease-in-out infinite}
+
+/* Holding a pad: the card's bottom edge fills up over --hold; let go early and it empties */
+.card .hold{position:absolute;left:0;right:0;bottom:0;height:6px;background:rgba(0,0,0,.35)}
+.card .hold::before{content:"";display:block;height:100%;width:0;background:var(--c);box-shadow:0 0 12px var(--c)}
+.card.holding{border-color:var(--c);transform:scale(1.04);box-shadow:0 0 34px -8px var(--c)}
+.card.holding .hold::before{width:100%;transition:width var(--hold,2s) linear}
+.card.holding .slot::after{animation-duration:.6s}
+.opla.holding .card:not(.holding){opacity:.45}
+
+/* Feedback when a choice is made */
+.opla.picked .card{opacity:.25;transform:scale(.96)}
+.opla.picked .card.chosen{opacity:1;transform:scale(1.06);border-color:var(--c);box-shadow:0 0 44px -6px var(--c)}
+.opla.picked .card.chosen .hold::before{width:100%}
+
+@keyframes card-in{from{opacity:0;transform:translateY(18px) scale(.94)}}
+@keyframes led{0%{opacity:.8;transform:scale(.85)}100%{opacity:0;transform:scale(1.25)}}
+@keyframes blink{50%{opacity:.35}}
+
+@media (max-width:760px){
+  .opla{grid-template-columns:1fr 1fr;grid-template-areas:"il ir" "ol or"}
+  .upside-down .opla{grid-template-areas:"ol or" "il ir"}
+  .opla::before,.opla-screen,.opla-nova{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  .card,.card .slot::after,.lvls i.next{animation:none;transition:none}
+}

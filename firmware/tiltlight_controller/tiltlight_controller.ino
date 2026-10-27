@@ -6,6 +6,7 @@
   Sends to the game (115200 baud, one message per line):
     A,<ax>,<ay>         accelerometer X/Y in g, about 60 times per second
     B,<n>               touch button n (0-4) was pressed
+    E,<n>               touch button n was released (level-up picks need a 2 s hold)
 
   Receives from the game:
     H                   player got hit           -> red flash + buzz
@@ -16,6 +17,7 @@
     D,hp,max,lvl,secs   stats for the round screen
     G                   game over
     R                   new run
+    O,<0|1>             board held upright / upside down -> screen rotates to stay readable
 */
 
 #include <Arduino_MKRIoTCarrier.h>
@@ -30,6 +32,7 @@ const bool USING_PLASTIC_CASE = true;
 
 const unsigned long ACCEL_MS = 16;     // ~60 tilt readings per second
 const uint8_t LED_BRIGHTNESS = 25;     // 0-255
+const unsigned long HOLD_MS = 2000;    // level-up hold time; keep in sync with HOLD_MS in js/config/controls.js
 
 const touchButtons PADS[5] = { TOUCH0, TOUCH1, TOUCH2, TOUCH3, TOUCH4 };
 
@@ -39,6 +42,9 @@ int superPct = 0;
 bool pickMode = false;
 bool gameOver = false;
 bool inGame = false;
+int heldPad = -1;                      // pad currently touched, -1 if none
+unsigned long holdStart = 0;
+uint8_t baseRotation = 0;              // display rotation the library starts with
 
 // ---------------------------------------------------------------- LEDs
 uint32_t baseColor[5] = { 0, 0, 0, 0, 0 };
@@ -76,12 +82,20 @@ void flash(uint32_t color, unsigned long ms) {
   flashUntil = millis() + ms;
 }
 
+float holdProgress(unsigned long now) {
+  float p = (now - holdStart) / (float)HOLD_MS;
+  return p > 1 ? 1 : p;
+}
+
 void updateLeds() {
   unsigned long now = millis();
+  bool holding = pickMode && heldPad >= 0 && heldPad != 2;
   for (int i = 0; i < 5; i++) {
     uint32_t c;
     if (now < flashUntil) c = flashColor;
     else if (i == 2 && inGame && !gameOver) c = superColor(now);
+    // holding an option: its LED fills up over HOLD_MS, the others dim
+    else if (holding) c = scaleColor(baseColor[i], i == heldPad ? 0.3 + 0.7 * holdProgress(now) : 0.15);
     else c = baseColor[i];
     setLed(i, c);
   }
@@ -216,6 +230,7 @@ void handleCommand(char* s) {
     case 'C':
       clearOptionLeds();
       pickMode = false;
+      heldPad = -1;
       screenDirty = true;
       PLAY(SND_PICK);
       break;
@@ -261,6 +276,12 @@ void handleCommand(char* s) {
       screenDirty = true;
       PLAY(SND_START);
       break;
+
+    case 'O':
+      carrier.display.setRotation((baseRotation + (s[2] == '1' ? 2 : 0)) % 4);
+      needFullClear = true;
+      screenDirty = true;
+      break;
   }
 }
 
@@ -289,6 +310,7 @@ void setup() {
   Serial.begin(115200);
   if (USING_PLASTIC_CASE) carrier.withCase();
   carrier.begin();
+  baseRotation = carrier.display.getRotation();
   carrier.leds.setBrightness(LED_BRIGHTNESS);
   carrier.leds.clear();
   carrier.leds.show();
@@ -302,9 +324,14 @@ void loop() {
 
   carrier.Buttons.update();
   for (int i = 0; i < 5; i++) {
-    if (carrier.Buttons.onTouchDown(PADS[i]) && Serial) {
-      Serial.print("B,");
-      Serial.println(i);
+    if (carrier.Buttons.onTouchDown(PADS[i])) {
+      heldPad = i;
+      holdStart = now;
+      if (Serial) { Serial.print("B,"); Serial.println(i); }
+    }
+    if (carrier.Buttons.onTouchUp(PADS[i])) {
+      if (heldPad == i) heldPad = -1;
+      if (Serial) { Serial.print("E,"); Serial.println(i); }
     }
   }
 

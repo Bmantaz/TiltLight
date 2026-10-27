@@ -1,0 +1,5 @@
+/* Full-screen overlays shared by the title, level-up and game-over screens */
+.overlay{position:fixed;inset:0;display:none;place-items:center;padding:24px;overflow:auto;background:radial-gradient(ellipse at 50% 45%,rgba(11,18,21,.35),rgba(3,6,8,.92) 70%)}
+.overlay.show{display:flex}
+.overlay>*{margin:auto}
+.panel{background:var(--panel);border:1px solid var(--moss);border-radius:14px;padding:28px 30px;max-width:620px;width:100%}

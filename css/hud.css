@@ -1,0 +1,34 @@
+/* In-run heads-up display */
+#hud{position:fixed;inset:0;pointer-events:none;display:none}
+#hud.show{display:block}
+
+.xpbar{position:absolute;top:var(--safe-top);left:0;right:0;height:10px;background:rgba(0,0,0,.55)}
+#xpfill{height:100%;width:0;background:var(--frost);box-shadow:0 0 12px var(--frost)}
+
+.hud-left{position:absolute;top:calc(var(--safe-top) + 22px);left:18px}
+.lvrow{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
+#lvl{font-size:30px;line-height:1;color:var(--frost)}
+#hptxt{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.hpbar{width:210px;height:12px;background:rgba(0,0,0,.6);border:1px solid var(--moss);border-radius:2px;overflow:hidden}
+#hpfill{height:100%;width:100%;background:var(--rose);transition:width .12s}
+
+#loadout{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;max-width:240px}
+.ico{width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.6);border:1.5px solid var(--c);color:var(--c);display:grid;place-items:center;font-size:14px;position:relative}
+.ico i{position:absolute;right:-5px;bottom:-4px;font-style:normal;font-size:10px;font-weight:800;color:var(--ink);background:var(--night);border-radius:6px;padding:0 3px}
+
+.hud-right{position:absolute;top:calc(var(--safe-top) + 18px);right:20px;text-align:right}
+#time{font-size:40px;line-height:1}
+#kills{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
+
+.super{position:absolute;bottom:calc(var(--safe-bottom) + 22px);left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:12px;background:rgba(0,0,0,.55);padding:8px 16px 8px 8px;border-radius:999px;border:1px solid var(--moss)}
+.pad{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:13px;background:var(--peat);border:1.5px solid var(--amber);color:var(--amber)}
+.sbar{width:190px;height:8px;background:#000;border-radius:4px;overflow:hidden}
+#sfill{height:100%;width:0;background:var(--amber)}
+#stxt{font-size:13px;color:var(--muted);min-width:96px}
+.super.ready{border-color:var(--amber);box-shadow:0 0 28px rgba(255,181,71,.45)}
+.super.ready #stxt{color:var(--amber);font-weight:800}
+.super.ready .pad{background:var(--amber);color:var(--night)}
+
+@media (max-width:760px){
+  .hpbar{width:150px}
+}

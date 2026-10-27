@@ -1,0 +1,12 @@
+/* Game-over screen: run summary and embers earned */
+#over .panel{text-align:center}
+#over .row{justify-content:center}
+#over h2{font-size:72px;color:var(--rose);line-height:1}
+
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0 24px}
+.stats div{background:rgba(0,0,0,.3);border-radius:10px;padding:14px}
+.stats strong{display:block;font-size:30px;font-variant-numeric:tabular-nums}
+.stats span{font-size:13px;color:var(--muted)}
+
+.earn{font-size:22px;color:var(--amber);font-weight:800;margin-bottom:4px}
+.newrec{color:var(--frost);font-size:14px;min-height:1.3em;margin-bottom:20px}

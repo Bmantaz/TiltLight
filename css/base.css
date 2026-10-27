@@ -1,0 +1,36 @@
+/* Design tokens, reset and shared building blocks.
+   Canvas colours live in js/config/palette.js; keep the two in sync. */
+:root{
+  --night:#0b1215; --peat:#162126; --moss:#24343a; --ink:#efe9da; --muted:#8fa3a6;
+  --amber:#ffb547; --rose:#ff5470; --frost:#8fe3e0; --violet:#9a6cff; --ok:#8fe39b;
+  --panel:rgba(12,20,23,.94);
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--night);color:var(--ink);font-family:'Chivo',system-ui,sans-serif;overflow:hidden}
+canvas#game{position:fixed;inset:0;display:block}
+.display{font-family:'Pirata One','Georgia',serif;font-weight:400;letter-spacing:.01em}
+
+/* Controls */
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+.btn{border:1px solid var(--moss);background:var(--peat);padding:10px 16px;border-radius:8px;font-weight:600}
+.btn:hover{border-color:var(--muted)}
+.btn:disabled{cursor:default;opacity:.75;border-color:var(--moss)}
+.btn.primary{background:var(--amber);color:var(--night);border-color:var(--amber);font-weight:800;padding:13px 20px;font-size:16px}
+.btn.small{padding:6px 11px;font-size:13px}
+.btn.danger:hover{border-color:var(--rose);color:var(--rose)}
+kbd{font-family:inherit;font-size:12px;background:var(--peat);border:1px solid var(--moss);border-bottom-width:2px;border-radius:4px;padding:0 5px}
+
+/* Text */
+.row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.status{font-size:14px;color:var(--muted)}
+.status.ok{color:var(--ok)}
+.status.err{color:var(--rose)}
+.hint{font-size:13px;color:var(--muted);margin-top:16px;line-height:1.6}
+
+/* Shown only when the page is opened straight from disk, where modules can't load */
+.file-only{display:none}
+.is-file .file-only{display:block}

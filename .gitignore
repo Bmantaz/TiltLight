@@ -17,3 +17,6 @@ build/
 # Exported game saves (progress lives in the browser; these are personal backups)
 tiltlight-save*.json
 *.tiltsave
+
+# Node (only used for the dev server and tests)
+node_modules/
