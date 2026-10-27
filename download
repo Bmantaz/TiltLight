@@ -1,0 +1,19 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Arduino build output
+build/
+*.bin
+*.hex
+*.elf
+
+# Exported game saves (progress lives in the browser; these are personal backups)
+tiltlight-save*.json
+*.tiltsave
